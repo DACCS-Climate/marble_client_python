@@ -9,7 +9,7 @@ __all__ = ["DACCSNode"]
 
 
 class DACCSNode:
-    def __init__(self, nodename, jsondata) -> None:
+    def __init__(self, nodename: str, jsondata: dict[str]) -> None:
         self._name = nodename
         self._url = jsondata["url"]
         self._date_added = dateutil.parser.isoparse(jsondata["date_added"])
