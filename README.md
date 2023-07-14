@@ -1,2 +1,2 @@
-# daccs_node_python
+# DACCS python client
 A python library to access DACCS network information.
