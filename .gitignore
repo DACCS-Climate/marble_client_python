@@ -155,3 +155,8 @@ cython_debug/
 # IDE settings
 /.idea/
 /.vscode/
+
+# other project files
+jupyter/
+registry.cached.json
+cache_metadata.json
