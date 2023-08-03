@@ -1,4 +1,5 @@
 import os
+
 from platformdirs import user_cache_dir
 
 __all__ = ("NODE_REGISTRY_URL", "CACHE_FNAME", "CACHE_META_FNAME")
@@ -6,7 +7,7 @@ __all__ = ("NODE_REGISTRY_URL", "CACHE_FNAME", "CACHE_META_FNAME")
 # DACCS node registry URL
 NODE_REGISTRY_URL: str = os.getenv(
     "DACCS_NODE_REGISTRY_URL",
-    "https://raw.githubusercontent.com/DACCS-Climate/DACCS-node-registry/main/doc/node_registry.example.json",
+    "https://raw.githubusercontent.com/DACCS-Climate/DACCS-node-registry/current-registry/node_registry.json",
 )
 
 _CACHE_DIR: str = os.getenv("DACCS_CACHE_DIR", user_cache_dir("daccs_client_python"))
