@@ -11,15 +11,17 @@ __all__ = ["DACCSNode"]
 class DACCSNode:
     def __init__(self, nodename: str, jsondata: dict[str]) -> None:
         self._name = nodename
-        self._url = jsondata["url"]
+        self._description = jsondata["description"]
         self._date_added = dateutil.parser.isoparse(jsondata["date_added"])
         self._affiliation = jsondata["affiliation"]
-        self._icon_url = jsondata["icon_url"]
         self._location = jsondata["location"]
         self._contact = jsondata["contact"]
         self._last_updated = dateutil.parser.isoparse(jsondata["last_updated"])
         self._daccs_version = jsondata["version"]
         self._status = jsondata["status"]
+
+        for item in jsondata["links"]:
+            setattr(self, "_links_" + item["rel"].replace("-", "_"), item["href"])
 
         self._services: list[str] = []
 
@@ -36,8 +38,20 @@ class DACCSNode:
         return self._name
 
     @property
+    def description(self) -> str:
+        return self._description
+
+    @property
     def url(self) -> str:
-        return self._url
+        return self._links_service
+
+    @property
+    def collection_url(self) -> str:
+        return self._links_collection
+
+    @property
+    def version_url(self) -> str:
+        return self._links_version
 
     @property
     def date_added(self) -> datetime:
@@ -47,9 +61,9 @@ class DACCSNode:
     def affiliation(self) -> str:
         return self._affiliation
 
-    @property
-    def icon_url(self) -> str:
-        return self._icon_url
+    # @property
+    # def icon_url(self) -> str:
+    #     return self._icon_url
 
     @property
     def location(self) -> dict[str, float]:

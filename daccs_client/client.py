@@ -9,10 +9,9 @@ from typing import Optional
 import dateutil.parser
 import requests
 
+from daccs_client.constants import CACHE_FNAME, CACHE_META_FNAME, NODE_REGISTRY_URL
 from daccs_client.exceptions import UnknownNodeError
 from daccs_client.node import DACCSNode
-
-from daccs_client.constants import NODE_REGISTRY_URL, CACHE_FNAME, CACHE_META_FNAME
 
 __all__ = ["DACCSClient"]
 
@@ -33,7 +32,6 @@ class DACCSClient:
         self._fallback = fallback
         self._nodes: dict[str, DACCSNode] = {}
         self._registry: dict = {}
-
         try:
             registry = requests.get(NODE_REGISTRY_URL)
             registry.raise_for_status()
