@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import dateutil.parser
+import requests
 
 from daccs_client.exceptions import ServiceNotAvailableError
 from daccs_client.services import DACCSService
@@ -31,7 +32,12 @@ class DACCSNode:
             self._services.append(s.name)
 
     def is_online(self) -> bool:
-        return self._status == "online"
+        try:
+            registry = requests.get(self.url)
+            registry.raise_for_status()
+            return True
+        except (requests.exceptions.RequestException, requests.exceptions.ConnectionError):
+            return False
 
     @property
     def name(self) -> str:
@@ -61,10 +67,6 @@ class DACCSNode:
     def affiliation(self) -> str:
         return self._affiliation
 
-    # @property
-    # def icon_url(self) -> str:
-    #     return self._icon_url
-
     @property
     def location(self) -> dict[str, float]:
         return self._location
@@ -80,10 +82,6 @@ class DACCSNode:
     @property
     def daccs_version(self) -> str:
         return self._daccs_version
-
-    @property
-    def status(self) -> str:
-        return self._status
 
     @property
     def services(self) -> list[str]:
