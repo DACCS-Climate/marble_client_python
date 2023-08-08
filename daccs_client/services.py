@@ -16,8 +16,6 @@ class DACCSService:
 
         self._service = None
         self._service_doc = None
-        self._service_desc = None
-        self._conformance = None
 
         for item in servicejson["links"]:
             setattr(self, "_" + item["rel"].replace("-", "_"), item["href"])
@@ -50,16 +48,7 @@ class DACCSService:
         return self._description
 
     @property
-    def conformance(self) -> str:
-        """Access the URL that defines the conformances of this service
-
-        :return: Link to conformance page
-        :rtype: str
-        """
-        return self._conformance
-
-    @property
-    def service_url(self) -> str:
+    def url(self) -> str:
         """Access the URL for the service itself. Note: the preferred approach to access the service
         URL is via just using the name of the DACCSService object.
 
@@ -74,16 +63,11 @@ class DACCSService:
         return self._service
 
     @property
-    def service_doc_url(self) -> str:
+    def doc_url(self) -> str:
         return self._service_doc
 
-    @property
-    def service_desc_url(self) -> str:
-        return self._service_desc
-
     def __str__(self) -> str:
-        s = f"DACCS service: {self.name}\n"
-        return s
+        return f"DACCS service: {self.name}\n"
 
     def __repr__(self) -> str:
         return self._service
