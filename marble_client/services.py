@@ -1,13 +1,13 @@
 from typing import Any
 
-__all__ = ["DACCSService"]
+__all__ = ["MarbleService"]
 
 
-class DACCSService:
+class MarbleService:
     def __init__(self, servicejson: dict[str, Any]) -> None:
         """Constructor method
 
-        :param servicejson: A JSON representing the service according to the schema defined for the DACCS node registry
+        :param servicejson: A JSON representing the service according to the schema defined for the Marble node registry
         :type servicejson: dict[str, Any]
         """
         self._name = servicejson["name"]
@@ -50,11 +50,11 @@ class DACCSService:
     @property
     def url(self) -> str:
         """Access the URL for the service itself. Note: the preferred approach to access the service
-        URL is via just using the name of the DACCSService object.
+        URL is via just using the name of the MarbleService object.
 
         E.g.::
 
-            s = DACCSService(jsondata)
+            s = MarbleService(jsondata)
             s  # this prints http://url-of-service
 
         :return: Service URL
@@ -67,7 +67,7 @@ class DACCSService:
         return self._service_doc
 
     def __str__(self) -> str:
-        return f"DACCS service: {self.name}\n"
+        return f"Marble service: {self.name}\n"
 
     def __repr__(self) -> str:
         return self._service

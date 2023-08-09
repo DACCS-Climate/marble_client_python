@@ -1,16 +1,16 @@
 [build-system]
-requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+requires = ["setuptools>=61.0"]
 
 [project]
-name = "daccs_client"
 authors = [{name = "Deepak Chandan", email = "dchandan@cs.toronto.edu"}]
-description = "A python client to access information about the DACCS network"
-version = "0.0.1"
+description = "A python client to access information about the Marble climate infomatics network"
+name = "marble_client"
 requires-python = ">=3.9"
+version = "0.0.1"
 
 [tool.setuptools]
-packages = ["daccs_client"]
+packages = ["marble_client"]
 
 [tool.black]
 line-length = 120
