@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 import dateutil.parser
@@ -11,15 +12,8 @@ __all__ = ["DACCSNode"]
 
 class DACCSNode:
     def __init__(self, nodename: str, jsondata: dict[str]) -> None:
+        self._nodedata = jsondata
         self._name = nodename
-        self._description = jsondata["description"]
-        self._date_added = dateutil.parser.isoparse(jsondata["date_added"])
-        self._affiliation = jsondata["affiliation"]
-        self._location = jsondata["location"]
-        self._contact = jsondata["contact"]
-        self._last_updated = dateutil.parser.isoparse(jsondata["last_updated"])
-        self._daccs_version = jsondata["version"]
-        self._status = jsondata["status"]
 
         for item in jsondata["links"]:
             setattr(self, "_links_" + item["rel"].replace("-", "_"), item["href"])
@@ -45,7 +39,7 @@ class DACCSNode:
 
     @property
     def description(self) -> str:
-        return self._description
+        return self._nodedata["description"]
 
     @property
     def url(self) -> str:
@@ -61,27 +55,27 @@ class DACCSNode:
 
     @property
     def date_added(self) -> datetime:
-        return self._date_added
+        return dateutil.parser.isoparse(self._nodedata["date_added"])
 
     @property
     def affiliation(self) -> str:
-        return self._affiliation
+        return self._nodedata["affiliation"]
 
     @property
     def location(self) -> dict[str, float]:
-        return self._location
+        return self._nodedata["location"]
 
     @property
     def contact(self) -> str:
-        return self._contact
+        return self._nodedata["contact"]
 
     @property
     def last_updated(self) -> datetime:
-        return self._last_updated
+        return dateutil.parser.isoparse(self._nodedata["last_updated"])
 
     @property
     def daccs_version(self) -> str:
-        return self._daccs_version
+        return self._nodedata["version"]
 
     @property
     def services(self) -> list[str]:
