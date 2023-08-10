@@ -9,14 +9,14 @@ from typing import Optional
 import dateutil.parser
 import requests
 
-from daccs_client.constants import CACHE_FNAME, CACHE_META_FNAME, NODE_REGISTRY_URL
-from daccs_client.exceptions import UnknownNodeError
-from daccs_client.node import DACCSNode
+from marble_client.constants import CACHE_FNAME, CACHE_META_FNAME, NODE_REGISTRY_URL
+from marble_client.exceptions import UnknownNodeError
+from marble_client.node import MarbleNode
 
-__all__ = ["DACCSClient"]
+__all__ = ["MarbleClient"]
 
 
-class DACCSClient:
+class MarbleClient:
     def __init__(self, fallback: Optional[bool] = True) -> None:
         """Constructor method
 
@@ -30,7 +30,7 @@ class DACCSClient:
         :raise RuntimeError: If cached registry needs to be read but there is no cache
         """
         self._fallback = fallback
-        self._nodes: dict[str, DACCSNode] = {}
+        self._nodes: dict[str, MarbleNode] = {}
         self._registry: dict = {}
         try:
             registry = requests.get(NODE_REGISTRY_URL)
@@ -45,17 +45,17 @@ class DACCSClient:
             self._load_registry_from_cloud(registry)
 
         for node, node_details in self._registry.items():
-            self._nodes[node] = DACCSNode(node, node_details)
+            self._nodes[node] = MarbleNode(node, node_details)
 
     @property
-    def nodes(self) -> dict[str, DACCSNode]:
+    def nodes(self) -> dict[str, MarbleNode]:
         return self._nodes
 
-    def __getitem__(self, node: str) -> DACCSNode:
+    def __getitem__(self, node: str) -> MarbleNode:
         try:
             return self.nodes[node]
         except KeyError:
-            raise UnknownNodeError(f"No node named '{node}' in the DACCS network.") from None
+            raise UnknownNodeError(f"No node named '{node}' in the Marble network.") from None
 
     def _load_registry_from_cloud(self, registry_response: requests.Response) -> None:
         try:
@@ -122,5 +122,5 @@ class DACCSClient:
 
 
 if __name__ == "__main__":
-    d = DACCSClient()
+    d = MarbleClient()
     print(d.nodes)
