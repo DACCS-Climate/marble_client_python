@@ -9,12 +9,10 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
-description = "A python client to access information about the DACCS network"
 description = "A python client to access information about the Marble climate infomatics network"
 dynamic = ["dependencies"]
 keywords = ["climate", "climate infomatics", "climate data", "DACCS", "Marble"]
 license = {file = "LICENSE"}
-name = "daccs_client"
 name = "marble_client"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -22,8 +20,8 @@ version = "1.0.0"
 
 [project.urls]
 # Homepage will change to Marble homepage when that goes live
-"Bug Tracker" = "https://github.com/DACCS-Climate/daccs_client_python/issues"
-"Homepage" = "https://github.com/DACCS-Climate/daccs_client_python"
+"Bug Tracker" = "https://github.com/DACCS-Climate/marble_client_python/issues"
+"Homepage" = "https://github.com/DACCS-Climate/marble_client_python"
 
 [tool.setuptools]
 packages = ["marble_client"]
