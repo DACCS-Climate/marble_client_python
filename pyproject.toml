@@ -4,13 +4,30 @@ requires = ["setuptools>=61.0"]
 
 [project]
 authors = [{name = "Deepak Chandan", email = "dchandan@cs.toronto.edu"}]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
 description = "A python client to access information about the Marble climate infomatics network"
+dynamic = ["dependencies"]
+keywords = ["climate", "climate infomatics", "climate data", "DACCS", "Marble"]
+license = {file = "LICENSE"}
 name = "marble_client"
+readme = "README.md"
 requires-python = ">=3.9"
-version = "0.0.1"
+version = "1.0.0"
+
+[project.urls]
+# Homepage will change to Marble homepage when that goes live
+"Bug Tracker" = "https://github.com/DACCS-Climate/marble_client_python/issues"
+"Homepage" = "https://github.com/DACCS-Climate/marble_client_python"
 
 [tool.setuptools]
 packages = ["marble_client"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
 
 [tool.black]
 line-length = 120
