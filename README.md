@@ -1,6 +1,13 @@
 # Marble python client
 A python library to access information about the Marble climate infomatics network. The library provides a pythonic interface to the Marble network's [central registry](https://github.com/DACCS-Climate/Marble-node-registry). Users of the network are encouraged to use this library to access the network information and avoid hardcoding URLs to various nodes or services.
 
+## Installation
+
+To install `marble_client` issue this command:
+```shell
+pip install marble_client
+``` 
+
 ## Basic usage
 
 The first thing to do is to get a `client` object:
