@@ -106,3 +106,41 @@ Weaver URL is https://pavics.ouranos.ca/weaver/
 >>> print(f"Weaver URL is {MarbleClient()['PAVICS'].weaver}")
 Weaver URL is https://pavics.ouranos.ca/weaver/
 ```
+
+## Jupyterlab functionality
+
+When running in a Marble Jupyterlab environment, the client can take advantage of various environment variables and 
+Jupyter's API to provide some additional functionality. 
+
+> [!WARNING]
+> Calling any of the methods described below outside a Marble Jupyterlab environment will raise a 
+> `JupyterEnvironmentError`.
+
+Get the node your notebook/script is currently running on:
+
+```python
+>>> client = MarbleClient()
+>>> client.current_node
+<marble_client.node.MarbleNode at 0x10c129990>
+```
+
+Add Magpie cookies to a `requests.Session` object. This means that any request made with that session variable will
+be made as if you were logged in to the current Marble node. This is the recommended way to access protected resources
+programmatically in your scripts:
+
+```python
+>>> client = MarbleClient()
+>>> session = requests.Session
+>>> client.magpie_session(session)
+>>> session.cookies.get_dict()
+{...} # session cookiejar now includes magpie cookies
+```
+
+You can also use the `magpie_session` method to create a new `requests.Sesssion` object:
+
+```python
+>>> client = MarbleClient()
+>>> session = client.magpie_session()
+>>> session.cookies.get_dict()
+{...} # now includes magpie cookies
+```
