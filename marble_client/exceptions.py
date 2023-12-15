@@ -8,3 +8,7 @@ class ServiceNotAvailableError(MarbleBaseError):
 
 class UnknownNodeError(MarbleBaseError):
     pass
+
+
+class JupyterEnvironmentError(MarbleBaseError):
+    pass

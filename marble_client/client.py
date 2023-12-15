@@ -4,16 +4,34 @@ import json
 import os
 import shutil
 import warnings
+from functools import wraps, cache
 from typing import Optional
+from urllib.parse import urlparse
 
 import dateutil.parser
 import requests
 
 from marble_client.constants import CACHE_FNAME, CACHE_META_FNAME, NODE_REGISTRY_URL
-from marble_client.exceptions import UnknownNodeError
+from marble_client.exceptions import UnknownNodeError, JupyterEnvironmentError
 from marble_client.node import MarbleNode
 
 __all__ = ["MarbleClient"]
+
+
+def check_jupyterlab(f):
+    """
+    Wraps the function f by first checking if the current script is running in a
+    Marble Jupyterlab environment and raising a JupyterEnvironmentError if not.
+
+    This is used as a pre-check for functions that only work in a Marble Jupyterlab
+    environment.
+    """
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if os.getenv("PAVICS_HOST_URL"):
+            return f(*args, **kwargs)
+        raise JupyterEnvironmentError("Not in a Marble jupyterlab environment")
+    return wrapper
 
 
 class MarbleClient:
@@ -50,6 +68,38 @@ class MarbleClient:
     @property
     def nodes(self) -> dict[str, MarbleNode]:
         return self._nodes
+
+    @property
+    @cache
+    @check_jupyterlab
+    def current_node(self) -> MarbleNode:
+        """
+        Return the node where this script is currently running.
+
+        Note that this function only works in a Marble Jupyterlab environment.
+        """
+        host_url = urlparse(os.getenv("PAVICS_HOST_URL"))
+        for node in self.nodes.values():
+            if urlparse(node.url).hostname == host_url.hostname:
+                return node
+        raise UnknownNodeError(f"No node found in the registry with the url {host_url}")
+
+    @check_jupyterlab
+    def magpie_session(self, session: Optional[requests.Session]) -> requests.Session:
+        """
+        Add the Magpie cookies of the user who is currently logged in to the session object.
+        If a session object is not passed as an argument to this function, create a new session
+        object as well.
+
+        Note that this function only works in a Marble Jupyterlab environment.
+        """
+        if session is None:
+            session = requests.Session()
+        r = requests.get(f"{os.getenv('JUPYTERHUB_API_URL')}/users/{os.getenv('JUPYTERHUB_USER')}",
+                         headers={"Authorization": f"token {os.getenv('JUPYTERHUB_API_TOKEN')}"})
+        for name, value in r.json().get("auth_state", {}).get("magpie_cookies", {}).items():
+            session.cookies.set(name, value)
+        return session
 
     def __getitem__(self, node: str) -> MarbleNode:
         try:
