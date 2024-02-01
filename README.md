@@ -5,7 +5,7 @@ A python library to access information about the Marble climate infomatics netwo
 
 To install `marble_client` issue this command:
 ```shell
-pip install marble_client
+pip install marble-client
 ``` 
 
 ## Basic usage
