@@ -144,3 +144,10 @@ You can also use the `this_session` method to create a new `requests.Sesssion` o
 >>> session.cookies.get_dict()
 {...} # now includes session cookies
 ```
+
+You can now make a request to a protected resource on the current node using this session object. You will be able to 
+access the resource if you have permission:
+
+```python
+>>> session.get(f"{client.this_node.url}/some/protected/subpath")
+```
