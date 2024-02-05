@@ -85,7 +85,7 @@ class MarbleClient:
         raise UnknownNodeError(f"No node found in the registry with the url {host_url}")
 
     @check_jupyterlab
-    def this_session(self, session: Optional[requests.Session]) -> requests.Session:
+    def this_session(self, session: Optional[requests.Session] = None) -> requests.Session:
         """
         Add the login session cookies of the user who is currently logged in to the session object.
         If a session object is not passed as an argument to this function, create a new session
