@@ -130,13 +130,13 @@ programmatically in your scripts:
 
 ```python
 >>> client = MarbleClient()
->>> session = requests.Session
+>>> session = requests.Session()
 >>> client.this_session(session)
 >>> session.cookies.get_dict()
 {...} # session cookiejar now includes cookies
 ```
 
-You can also use the `this_session` method to create a new `requests.Sesssion` object:
+You can also use the `this_session` method to create a new `requests.Session` object:
 
 ```python
 >>> client = MarbleClient()
