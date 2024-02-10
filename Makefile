@@ -189,7 +189,9 @@ bump: bump-check bump-install  ## Bump version using specified <VERSION> (call: 
 		$(BUMP_CMD) $(BUMP_XARGS) $(BUMP_VERSION_LEVEL) && \
 		POST_RELEASE_TIME=$$(head -n 1 RELEASE.txt | cut -d " " -f 2) && \
 		echo "Replace $${PRE_RELEASE_TIME} → $${POST_RELEASE_TIME}" && \
-		$(_SED) -i "s/$${PRE_RELEASE_TIME}/$${POST_RELEASE_TIME}/g" $(BUMP_CFG) \
+		$(_SED) -i "s/$${PRE_RELEASE_TIME}/$${POST_RELEASE_TIME}/g" $(BUMP_CFG) && \
+		git add $(BUMP_CFG) && \
+		git commit --amend --no-edit \
 	'
 
 .PHONY: bump-install
