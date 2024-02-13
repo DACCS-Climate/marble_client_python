@@ -179,7 +179,7 @@ major: $(BUMP_CFG)
 
 # run bumpversion with replacement of the release time value within its config for auto-update on future revisions
 .PHONY: bump
-bump: bump-check bump-install  ## Bump version using specified <VERSION> (call: make VERSION=<MAJOR.MINOR.PATCH> bump)
+bump: bump-check bump-install  ## Bump version (call: make bump major|minor|patch)
 	@-$(MSG_I) "Updating package version..."
 	@[ $(BUMP_VERSION_INPUT) -eq 0 ] || [ "${VERSION}" ] || ( \
 		$(MSG_E) "Argument 'VERSION' is not specified to bump version"; exit 1 \
@@ -196,7 +196,7 @@ bump: bump-check bump-install  ## Bump version using specified <VERSION> (call: 
 
 .PHONY: bump-install
 bump-install:   ## Installs bump2version if not detected in the environment
-	@-$(SHELL) -c 'which -s "$(BUMP_TOOL)" || pip install $(BUMP_TOOL)'
+	@-$(SHELL) -c 'which "$(BUMP_TOOL)" &> /dev/null || pip install $(BUMP_TOOL)'
 
 .PHONY: bump-check
 bump-check:		## Verifies that required bump2version configuration file is present
