@@ -20,11 +20,10 @@ class MarbleNode:
 
         self._services: list[str] = []
 
-        if jsondata["status"] != "offline":
-            for service in jsondata["services"]:
-                s = MarbleService(service)
-                setattr(self, s.name, s)
-                self._services.append(s.name)
+        for service in jsondata.get("services", []):
+            s = MarbleService(service)
+            setattr(self, s.name, s)
+            self._services.append(s.name)
 
     def is_online(self) -> bool:
         try:
