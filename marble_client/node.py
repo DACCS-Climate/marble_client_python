@@ -20,7 +20,7 @@ class MarbleNode:
 
         self._services: list[str] = []
 
-        for service in jsondata["services"]:
+        for service in jsondata.get("services", []):
             s = MarbleService(service)
             setattr(self, s.name, s)
             self._services.append(s.name)
