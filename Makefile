@@ -1,6 +1,6 @@
 override SHELL       := bash
 override APP_NAME    := marble_client
-override APP_VERSION := 1.1.1
+override APP_VERSION := 1.1.2
 
 # utility to remove comments after value of an option variable
 override clean_opt = $(shell echo "$(1)" | $(_SED) -r -e "s/[ '$'\t'']+$$//g")
