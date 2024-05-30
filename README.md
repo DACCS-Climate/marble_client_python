@@ -21,14 +21,14 @@ The first thing to do is to get a `client` object:
 All the information about the network can now be retrieved from the `client` object. E.g. the nodes available in the network can be accessed as:
 ```python
 >>> client.nodes
-{'UofT': <marble_client.node.MarbleNode at 0x10c129990>,
- 'PAVICS': <marble_client.node.MarbleNode at 0x10c6dd690>,
- 'Hirondelle': <marble_client.node.MarbleNode at 0x10c6dd890>}
+{'UofTRedOak': <MarbleNode(id: 'UofTRedOak', name: 'Red Oak')>, 
+ 'PAVICS': <MarbleNode(id: 'PAVICS', name: 'PAVICS')>, 
+ 'Hirondelle': <MarbleNode(id: 'Hirondelle', name: 'Hirondelle')>}
 ```
 The returned object is a python `dict` with node names for keys and `MarbleNode` objects as values. A particular node can be accessed as:
 
 ```python
->>> mynode = client['UofT']
+>>> mynode = client['UofTRedOak']
 >>> type(mynode)
 marble_client.node.MarbleNode
 ```
@@ -43,7 +43,7 @@ True
 The URL for the node can be retrieved as:
 ```python
 >>> mynode.url
-'https://daccs.cs.toronto.edu'
+'https://redoak.cs.toronto.edu'
 ```
 
 Various other qualities about the node can be accessed as shown below (see [implementation](https://github.com/DACCS-Climate/marble_client_python/blob/main/marble_client/node.py) for the full list of available attributes).
@@ -121,7 +121,7 @@ Get the node your notebook/script is currently running on:
 ```python
 >>> client = MarbleClient()
 >>> client.this_node
-<marble_client.node.MarbleNode at 0x10c129990>
+<MarbleNode(id: 'UofTRedOak', name: 'Red Oak')>
 ```
 
 Add session cookies to a `requests.Session` object. This means that any request made with that session variable will
