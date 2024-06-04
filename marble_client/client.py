@@ -16,8 +16,6 @@ from marble_client.node import MarbleNode
 
 __all__ = ["MarbleClient"]
 
-JUPYTERLAB_ENV_VARIABLES = ("PAVICS_HOST_URL", "JUPYTERHUB_API_URL", "JUPYTERHUB_USER", "JUPYTERHUB_API_TOKEN")
-
 
 def check_jupyterlab(f):
     """
@@ -26,10 +24,15 @@ def check_jupyterlab(f):
 
     This is used as a pre-check for functions that only work in a Marble Jupyterlab
     environment.
+
+    Note that this checks if either the BIRDHOUSE_HOST_URL or PAVICS_HOST_URL are present to support
+    versions of birdhouse-deploy prior to 2.4.0.
     """
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if all(os.getenv(jupyter_var) for jupyter_var in JUPYTERLAB_ENV_VARIABLES):
+        birdhouse_host_var = ("PAVICS_HOST_URL", "BIRDHOUSE_HOST_URL")
+        jupyterhub_env_vars = ("JUPYTERHUB_API_URL", "JUPYTERHUB_USER", "JUPYTERHUB_API_TOKEN")
+        if any(os.getenv(var) for var in birdhouse_host_var) and all(os.getenv(var) for var in jupyterhub_env_vars):
             return f(*args, **kwargs)
         raise JupyterEnvironmentError("Not in a Marble jupyterlab environment")
     return wrapper
@@ -72,7 +75,8 @@ class MarbleClient:
 
         Note that this function only works in a Marble Jupyterlab environment.
         """
-        url_string = os.getenv("PAVICS_HOST_URL")
+        # PAVICS_HOST_URL is the deprecated variable used in older versions (<2.4.0) of birdhouse-deploy
+        url_string = os.getenv("BIRDHOUSE_HOST_URL", os.getenv("PAVICS_HOST_URL"))
         host_url = urlparse(url_string)
         for node in self.nodes.values():
             if urlparse(node.url).hostname == host_url.hostname:

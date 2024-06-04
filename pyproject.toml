@@ -36,4 +36,5 @@ line-length = 120
 [tool.pytest.ini_options]
 markers = [
     "load_from_cache: marks tests that should load the registry from a cached version",
+    "jupyterlab_environment: marks tests that test features that are only available in a Marble jupyterlab environment"
 ]

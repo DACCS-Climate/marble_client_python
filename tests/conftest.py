@@ -95,7 +95,7 @@ def first_url(registry_content):
 def jupyterlab_environment(request, monkeypatch, first_url, requests_mock):
     if "jupyterlab_environment" in request.keywords:
         kwargs = request.keywords["jupyterlab_environment"].kwargs
-        monkeypatch.setenv("PAVICS_HOST_URL", kwargs.get("url", first_url))
+        monkeypatch.setenv("BIRDHOUSE_HOST_URL", kwargs.get("url", first_url))
 
         jupyterhub_api_url = kwargs.get("jupyterhub_api_url", "http://jupyterhub.example.com")
         jupyterhub_user = kwargs.get("jupyterhub_user", "example_user")
