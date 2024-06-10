@@ -21,7 +21,7 @@ def test_node_registry_url_settable(monkeypatch):
 
 def test_cache_fname_default(tmp_cache):
     importlib.reload(marble_client.constants)
-    assert (marble_client.constants.CACHE_FNAME ==
+    assert (os.path.realpath(marble_client.constants.CACHE_FNAME) ==
             os.path.join(tmp_cache, "registry.cached.json"))
 
 
