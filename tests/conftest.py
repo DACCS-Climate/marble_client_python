@@ -1,5 +1,6 @@
 import importlib
 import json
+import os
 import random
 import tempfile
 import warnings
@@ -60,7 +61,7 @@ def tmp_cache(monkeypatch):
         monkeypatch.setenv("MARBLE_CACHE_DIR", tmp_dir)
         importlib.reload(marble_client.constants)
         importlib.reload(marble_client.client)
-        yield tmp_dir
+        yield os.path.realpath(tmp_dir)
 
 
 @pytest.fixture
