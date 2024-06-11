@@ -10,7 +10,7 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 description = "A python client to access information about the Marble climate infomatics network"
-dynamic = ["dependencies"]
+dynamic = ["dependencies", "optional-dependencies"]
 keywords = ["climate", "climate infomatics", "climate data", "DACCS", "Marble"]
 license = {file = "LICENSE"}
 name = "marble_client"
@@ -28,6 +28,13 @@ packages = ["marble_client"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
+optional-dependencies.test = {file = ["requirements-test.txt"]}
 
 [tool.black]
 line-length = 120
+
+[tool.pytest.ini_options]
+markers = [
+    "load_from_cache: marks tests that should load the registry from a cached version",
+    "jupyterlab_environment: marks tests that test features that are only available in a Marble jupyterlab environment"
+]

@@ -4,21 +4,21 @@ __all__ = ["MarbleService"]
 
 
 class MarbleService:
-    def __init__(self, servicejson: dict[str, Any]) -> None:
+    def __init__(self, servicejson: dict[str, Any], node: "MarbleNode") -> None:
         """Constructor method
 
         :param servicejson: A JSON representing the service according to the schema defined for the Marble node registry
         :type servicejson: dict[str, Any]
         """
-        self._name = servicejson["name"]
-        self._keywords = servicejson["keywords"]
-        self._description = servicejson["description"]
+        self._servicedata = servicejson
+        self._node = node
 
         self._service = None
         self._service_doc = None
-
+        self._links = {}
         for item in servicejson["links"]:
-            setattr(self, "_" + item["rel"].replace("-", "_"), item["href"])
+            if item.get("rel") in ("service", "service-doc"):
+                setattr(self, "_" + item["rel"].replace("-", "_"), item["href"])
 
     @property
     def name(self) -> str:
@@ -27,7 +27,7 @@ class MarbleService:
         :return: Name of the service
         :rtype: str
         """
-        return self._name
+        return self._servicedata["name"]
 
     @property
     def keywords(self) -> list[str]:
@@ -36,7 +36,7 @@ class MarbleService:
         :return: Keywords associated with this service
         :rtype: list[str]
         """
-        return self._keywords
+        return self._servicedata["keywords"]
 
     @property
     def description(self) -> str:
@@ -45,7 +45,7 @@ class MarbleService:
         :return: A short description of this service
         :rtype: str
         """
-        return self._description
+        return self._servicedata["description"]
 
     @property
     def url(self) -> str:
@@ -67,7 +67,7 @@ class MarbleService:
         return self._service_doc
 
     def __str__(self) -> str:
-        return f"Marble service: {self.name}\n"
+        return f"<{self.__class__.__name__}(name: '{self.name}', node_id: '{self._node.id}')>"
 
     def __repr__(self) -> str:
         return self._service
