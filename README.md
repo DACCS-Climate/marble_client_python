@@ -151,3 +151,43 @@ access the resource if you have permission:
 ```python
 >>> session.get(f"{client.this_node.url}/some/protected/subpath")
 ```
+
+## Contributing
+
+We welcome any contributions to this codebase. To submit suggested changes, please do the following:
+
+- create a new feature branch off of `main`
+- update the code, write/update tests, write/update documentation
+- submit a pull request targetting the `main` branch
+
+To develop this project locally, first clone this repository and install the testing and development
+dependencies:
+
+```sh
+pip install -e .[dev,test]
+```
+
+### Testing
+
+Tests are located in the `tests/` folder can be run using `pytest`:
+
+```sh
+pytest tests/
+```
+
+### Coding Style
+
+This codebase uses the [`ruff`](https://docs.astral.sh/ruff/) formatter and linter to enforce style policies.
+
+To check that your changes conform to these policies please run:
+
+```sh
+ruff format
+ruff check
+```
+
+You can also set up pre-commit hooks that will run these checks before you create any commit in this repo:
+
+```sh
+pre-commit install
+```

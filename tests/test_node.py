@@ -37,13 +37,11 @@ def test_url(node, node_json):
 
 
 def test_services_url(node, node_json):
-    assert (node.services_url ==
-            next(link["href"] for link in node_json["links"] if link["rel"] == "collection"))
+    assert node.services_url == next(link["href"] for link in node_json["links"] if link["rel"] == "collection")
 
 
 def test_version_url(node, node_json):
-    assert (node.version_url ==
-            next(link["href"] for link in node_json["links"] if link["rel"] == "version"))
+    assert node.version_url == next(link["href"] for link in node_json["links"] if link["rel"] == "version")
 
 
 def test_date_added(node, node_json):
@@ -79,12 +77,13 @@ def test_links(node, node_json):
 
 
 def test_getitem(node, node_json):
-    assert ({node[service_["name"]].name for service_ in node_json["services"]} ==
-            {service_["name"] for service_ in node_json["services"]})
+    assert {node[service_["name"]].name for service_ in node_json["services"]} == {
+        service_["name"] for service_ in node_json["services"]
+    }
 
 
 def test_getitem_no_such_service(node, node_json):
-    """ Test that __getitem__ raises an appropriate error if a service is not found """
+    """Test that __getitem__ raises an appropriate error if a service is not found"""
     with pytest.raises(marble_client.ServiceNotAvailableError):
         node["".join(service_["name"] for service_ in node_json["services"])]
 

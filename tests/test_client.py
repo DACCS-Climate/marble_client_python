@@ -23,15 +23,16 @@ def test_load_from_remote_registry():
 
 
 def test_load_from_remote_registry_update_cache(client, tmp_cache, registry_content):
-    """ Test that marble_client initialized using a remote repository saves the repository content to a local cache """
-    cache_file = os.path.join(tmp_cache, 'registry.cached.json')
+    """Test that marble_client initialized using a remote repository saves the repository content to a local cache"""
+    cache_file = os.path.join(tmp_cache, "registry.cached.json")
     assert os.path.isfile(cache_file)
     with open(cache_file) as f:
         content = json.load(f)
     assert content.get(client._registry_cache_key) == registry_content
     last_updated = content.get(client._registry_cache_last_updated_key)
-    assert (datetime.datetime.now(datetime.timezone.utc) - dateutil.parser.isoparse(last_updated) <
-            datetime.timedelta(seconds=1))
+    assert datetime.datetime.now(datetime.timezone.utc) - dateutil.parser.isoparse(last_updated) < datetime.timedelta(
+        seconds=1
+    )
 
 
 @pytest.mark.load_from_cache
@@ -57,7 +58,7 @@ def test_load_from_cache_no_fallback():
 
 
 def test_nodes(client, registry_content):
-    """ Test that `MarbleClient.nodes` returns all nodes from the repository """
+    """Test that `MarbleClient.nodes` returns all nodes from the repository"""
     assert client.nodes
     assert all(isinstance(n, marble_client.MarbleNode) for n in client.nodes.values())
     assert len(client.nodes) == len(registry_content)
@@ -65,13 +66,13 @@ def test_nodes(client, registry_content):
 
 @pytest.mark.jupyterlab_environment
 def test_this_node_in_jupyter_env(client, first_url):
-    """ Test that `MarbleClient.this_node` returns the current node when in a jupyterlab environment """
+    """Test that `MarbleClient.this_node` returns the current node when in a jupyterlab environment"""
     node = client.this_node
     assert node.url == first_url
 
 
 def test_this_node_not_in_jupyter_env(client):
-    """ Test that `MarbleClient.this_node` raises an error when not in a jupyterlab environment """
+    """Test that `MarbleClient.this_node` raises an error when not in a jupyterlab environment"""
     with pytest.raises(marble_client.JupyterEnvironmentError):
         client.this_node
 
@@ -97,7 +98,7 @@ def test_this_node_in_unknown_node(client):
 
 
 @pytest.mark.jupyterlab_environment(cookies={"auth_example": "cookie_example"})
-def test_this_session_in_jupyter_env(client, first_url):
+def test_this_session_in_jupyter_env(client):
     """
     Test that `MarbleClient.this_session` sets the login cookies of the current user into a session object when in a
     jupyterlab environment.
@@ -107,7 +108,7 @@ def test_this_session_in_jupyter_env(client, first_url):
 
 
 @pytest.mark.jupyterlab_environment(cookies={"auth_example": "cookie_example"})
-def test_this_session_in_jupyter_env(client, first_url):
+def test_this_session_in_jupyter_env_session_exists(client):
     """
     Test that `MarbleClient.this_session` sets the login cookies of the current user into a pre-existing session object
     when in a jupyterlab environment.
@@ -118,7 +119,7 @@ def test_this_session_in_jupyter_env(client, first_url):
 
 
 def test_this_session_not_in_jupyter_env(client):
-    """ Test that `MarbleClient.this_session` raises an error when not in a jupyterlab environment """
+    """Test that `MarbleClient.this_session` raises an error when not in a jupyterlab environment"""
     with pytest.raises(marble_client.JupyterEnvironmentError):
         client.this_session()
 
@@ -135,28 +136,29 @@ def test_this_session_in_invalid_jupyter_env(client):
 
 @pytest.mark.jupyterlab_environment(jupyterhub_api_response_status_code=500)
 def test_this_session_handles_api_error(client):
-    """ Test that `MarbleClient.this_session` raises an appropriate error when the JupyterHub API call fails """
+    """Test that `MarbleClient.this_session` raises an appropriate error when the JupyterHub API call fails"""
     with pytest.raises(marble_client.JupyterEnvironmentError):
         client.this_session()
 
 
 def test_getitem(client, registry_content):
-    """ Test that __getitem__ can be used to access the nodes in the nodes list """
-    assert ({client.nodes[node_id].id for node_id in registry_content} ==
-            {client[node_id].id for node_id in registry_content})
+    """Test that __getitem__ can be used to access the nodes in the nodes list"""
+    assert {client.nodes[node_id].id for node_id in registry_content} == {
+        client[node_id].id for node_id in registry_content
+    }
 
 
 def test_getitem_no_such_node(client, registry_content):
-    """ Test that __getitem__ raises an appropriate error if a node is not found """
+    """Test that __getitem__ raises an appropriate error if a node is not found"""
     with pytest.raises(marble_client.UnknownNodeError):
         client["".join(registry_content)]
 
 
 def test_contains(client, registry_content):
-    """ Test that __contains__ returns True when a node is available for the current client """
+    """Test that __contains__ returns True when a node is available for the current client"""
     assert all(node_id in client for node_id in registry_content)
 
 
 def test_not_contains(client, registry_content):
-    """ Test that __contains__ returns False when a node is not available for the current client """
+    """Test that __contains__ returns False when a node is not available for the current client"""
     assert "".join(registry_content) not in client

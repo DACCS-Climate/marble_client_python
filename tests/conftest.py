@@ -25,8 +25,9 @@ def registry_content():
         registry_resp.raise_for_status()
         content = registry_resp.json()
     except Exception as requests_err:
-        warnings.warn(f"Cannot access remote registry at {registry_url}. "
-                      f"Trying to load from cache file at {cache_file}.")
+        warnings.warn(
+            f"Cannot access remote registry at {registry_url}. Trying to load from cache file at {cache_file}."
+        )
         try:
             with open(cache_file) as f:
                 content = json.load(f)
@@ -46,10 +47,13 @@ def registry_request(request, requests_mock, registry_content, tmp_cache):
     if "load_from_cache" in request.keywords:
         requests_mock.get(marble_client.constants.NODE_REGISTRY_URL, status_code=500)
         with open(marble_client.constants.CACHE_FNAME, "w") as f:
-            json.dump({
-                marble_client.MarbleClient._registry_cache_key: registry_content,
-                marble_client.MarbleClient._registry_cache_last_updated_key: '1900'
-            }, f)
+            json.dump(
+                {
+                    marble_client.MarbleClient._registry_cache_key: registry_content,
+                    marble_client.MarbleClient._registry_cache_last_updated_key: "1900",
+                },
+                f,
+            )
     else:
         requests_mock.get(marble_client.constants.NODE_REGISTRY_URL, json=registry_content)
     yield
@@ -82,9 +86,11 @@ def service(client):
 
 @pytest.fixture
 def service_json(service, registry_content):
-    yield next(service_data
-               for service_data in registry_content[service._node.id]["services"]
-               if service_data == service._servicedata)
+    yield next(
+        service_data
+        for service_data in registry_content[service._node.id]["services"]
+        if service_data == service._servicedata
+    )
 
 
 @pytest.fixture
@@ -105,7 +111,9 @@ def jupyterlab_environment(request, monkeypatch, first_url, requests_mock):
         monkeypatch.setenv("JUPYTERHUB_USER", jupyterhub_user)
         monkeypatch.setenv("JUPYTERHUB_API_TOKEN", jupyterhub_api_token)
         cookies = kwargs.get("cookies", {})
-        requests_mock.get(f"{jupyterhub_api_url}/users/{jupyterhub_user}",
-                          json={"auth_state": {"magpie_cookies": cookies}},
-                          status_code=kwargs.get("jupyterhub_api_response_status_code", 200))
+        requests_mock.get(
+            f"{jupyterhub_api_url}/users/{jupyterhub_user}",
+            json={"auth_state": {"magpie_cookies": cookies}},
+            status_code=kwargs.get("jupyterhub_api_response_status_code", 200),
+        )
     yield

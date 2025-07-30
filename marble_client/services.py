@@ -1,11 +1,17 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from marble_client.node import MarbleNode
 
 __all__ = ["MarbleService"]
 
 
 class MarbleService:
+    """Service offered by a Marble node."""
+
     def __init__(self, servicejson: dict[str, Any], node: "MarbleNode") -> None:
-        """Constructor method
+        """
+        Initialize a marble service instance.
 
         :param servicejson: A JSON representing the service according to the schema defined for the Marble node registry
         :type servicejson: dict[str, Any]
@@ -22,7 +28,8 @@ class MarbleService:
 
     @property
     def name(self) -> str:
-        """Name of the service
+        """
+        Name of the service.
 
         :return: Name of the service
         :rtype: str
@@ -31,7 +38,8 @@ class MarbleService:
 
     @property
     def keywords(self) -> list[str]:
-        """Keywords associated with this service
+        """
+        Keywords associated with this service.
 
         :return: Keywords associated with this service
         :rtype: list[str]
@@ -40,7 +48,8 @@ class MarbleService:
 
     @property
     def description(self) -> str:
-        """A short description of this service
+        """
+        A short description of this service.
 
         :return: A short description of this service
         :rtype: str
@@ -49,7 +58,9 @@ class MarbleService:
 
     @property
     def url(self) -> str:
-        """Access the URL for the service itself. Note: the preferred approach to access the service
+        """
+        Access the URL for the service itself. Note: the preferred approach to access the service.
+
         URL is via just using the name of the MarbleService object.
 
         E.g.::
@@ -64,10 +75,13 @@ class MarbleService:
 
     @property
     def doc_url(self) -> str:
+        """Return documentation URL."""
         return self._service_doc
 
     def __str__(self) -> str:
+        """Return string containing name and node_id."""
         return f"<{self.__class__.__name__}(name: '{self.name}', node_id: '{self._node.id}')>"
 
     def __repr__(self) -> str:
+        """Return service URL."""
         return self._service
