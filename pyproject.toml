@@ -29,6 +29,7 @@ packages = ["marble_client"]
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 optional-dependencies.test = {file = ["requirements-test.txt"]}
+optional-dependencies.dev = {file = ["requirements-dev.txt"]}
 
 [tool.black]
 line-length = 120
