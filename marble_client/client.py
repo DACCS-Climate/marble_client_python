@@ -3,22 +3,24 @@ import json
 import os
 import shutil
 import warnings
-from functools import wraps, cache
-from typing import Optional, Any
+from functools import cache, wraps
+from typing import Any, Callable, Optional
 from urllib.parse import urlparse
 
 import dateutil.parser
 import requests
 
 from marble_client.constants import CACHE_FNAME, NODE_REGISTRY_URL
-from marble_client.exceptions import UnknownNodeError, JupyterEnvironmentError
+from marble_client.exceptions import JupyterEnvironmentError, UnknownNodeError
 from marble_client.node import MarbleNode
 
 __all__ = ["MarbleClient"]
 
 
-def check_jupyterlab(f):
+def check_jupyterlab(f: Callable) -> Callable:
     """
+    Raise an error if not running in a Jupyterlab instance.
+
     Wraps the function f by first checking if the current script is running in a
     Marble Jupyterlab environment and raising a JupyterEnvironmentError if not.
 
@@ -28,22 +30,27 @@ def check_jupyterlab(f):
     Note that this checks if either the BIRDHOUSE_HOST_URL or PAVICS_HOST_URL are present to support
     versions of birdhouse-deploy prior to 2.4.0.
     """
+
     @wraps(f)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs) -> Any:
         birdhouse_host_var = ("PAVICS_HOST_URL", "BIRDHOUSE_HOST_URL")
         jupyterhub_env_vars = ("JUPYTERHUB_API_URL", "JUPYTERHUB_USER", "JUPYTERHUB_API_TOKEN")
         if any(os.getenv(var) for var in birdhouse_host_var) and all(os.getenv(var) for var in jupyterhub_env_vars):
             return f(*args, **kwargs)
         raise JupyterEnvironmentError("Not in a Marble jupyterlab environment")
+
     return wrapper
 
 
 class MarbleClient:
+    """Client object representing the information in the Marble registry."""
+
     _registry_cache_key = "marble_client_python:cached_registry"
     _registry_cache_last_updated_key = "marble_client_python:last_updated"
 
     def __init__(self, fallback: bool = True) -> None:
-        """Constructor method
+        """
+        Initialize a MarbleClient instance.
 
         :param fallback: If True, then fall back to a cached version of the registry
             if the cloud registry cannot be accessed, defaults to True
@@ -64,6 +71,7 @@ class MarbleClient:
 
     @property
     def nodes(self) -> dict[str, MarbleNode]:
+        """Return nodes in the current registry."""
         return self._nodes
 
     @property
@@ -87,6 +95,7 @@ class MarbleClient:
     def this_session(self, session: Optional[requests.Session] = None) -> requests.Session:
         """
         Add the login session cookies of the user who is currently logged in to the session object.
+
         If a session object is not passed as an argument to this function, create a new session
         object as well.
 
@@ -94,8 +103,10 @@ class MarbleClient:
         """
         if session is None:
             session = requests.Session()
-        r = requests.get(f"{os.getenv('JUPYTERHUB_API_URL')}/users/{os.getenv('JUPYTERHUB_USER')}",
-                         headers={"Authorization": f"token {os.getenv('JUPYTERHUB_API_TOKEN')}"})
+        r = requests.get(
+            f"{os.getenv('JUPYTERHUB_API_URL')}/users/{os.getenv('JUPYTERHUB_USER')}",
+            headers={"Authorization": f"token {os.getenv('JUPYTERHUB_API_TOKEN')}"},
+        )
         try:
             r.raise_for_status()
         except requests.HTTPError as err:
@@ -105,17 +116,20 @@ class MarbleClient:
         return session
 
     @property
-    def registry_uri(self):
+    def registry_uri(self) -> str:
+        """Return the URL of the currently used Marble registry."""
         return self._registry_uri
 
     def __getitem__(self, node: str) -> MarbleNode:
+        """Return the node with the given name."""
         try:
             return self.nodes[node]
         except KeyError as err:
             raise UnknownNodeError(f"No node named '{node}' in the Marble network.") from err
 
     def __contains__(self, node: str) -> bool:
-        """Check if a node is available
+        """
+        Check if a node is available.
 
         :param node: ID of the Marble node
         :type node: str
@@ -175,8 +189,10 @@ class MarbleClient:
 
         try:
             with open(CACHE_FNAME, "w") as f:
-                data = {self._registry_cache_key: registry,
-                        self._registry_cache_last_updated_key: datetime.datetime.now(tz=datetime.timezone.utc).isoformat()}
+                data = {
+                    self._registry_cache_key: registry,
+                    self._registry_cache_last_updated_key: datetime.datetime.now(tz=datetime.timezone.utc).isoformat(),
+                }
                 json.dump(data, f)
         except OSError:
             # If the cache file cannot be written, then restore from backup files
