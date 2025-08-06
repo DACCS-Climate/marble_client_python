@@ -7,8 +7,15 @@ import warnings
 
 import pytest
 import requests
+import responses as responses_
 
 import marble_client
+
+
+@pytest.fixture
+def responses():
+    with responses_.RequestsMock(assert_all_requests_are_fired=False) as rsps:
+        yield rsps
 
 
 @pytest.fixture
@@ -43,9 +50,9 @@ def registry_content():
 
 
 @pytest.fixture(autouse=True)
-def registry_request(request, requests_mock, registry_content, tmp_cache):
+def registry_request(request, responses, registry_content, tmp_cache):
     if "load_from_cache" in request.keywords:
-        requests_mock.get(marble_client.constants.NODE_REGISTRY_URL, status_code=500)
+        responses.get(marble_client.constants.NODE_REGISTRY_URL, status=500)
         with open(marble_client.constants.CACHE_FNAME, "w") as f:
             json.dump(
                 {
@@ -55,7 +62,7 @@ def registry_request(request, requests_mock, registry_content, tmp_cache):
                 f,
             )
     else:
-        requests_mock.get(marble_client.constants.NODE_REGISTRY_URL, json=registry_content)
+        responses.get(marble_client.constants.NODE_REGISTRY_URL, json=registry_content)
     yield
 
 
@@ -99,7 +106,7 @@ def first_url(registry_content):
 
 
 @pytest.fixture(autouse=True)
-def jupyterlab_environment(request, monkeypatch, first_url, requests_mock):
+def jupyterlab_environment(request, monkeypatch, first_url, responses):
     if "jupyterlab_environment" in request.keywords:
         kwargs = request.keywords["jupyterlab_environment"].kwargs
         monkeypatch.setenv("BIRDHOUSE_HOST_URL", kwargs.get("url", first_url))
@@ -111,9 +118,9 @@ def jupyterlab_environment(request, monkeypatch, first_url, requests_mock):
         monkeypatch.setenv("JUPYTERHUB_USER", jupyterhub_user)
         monkeypatch.setenv("JUPYTERHUB_API_TOKEN", jupyterhub_api_token)
         cookies = kwargs.get("cookies", {})
-        requests_mock.get(
+        responses.get(
             f"{jupyterhub_api_url}/users/{jupyterhub_user}",
             json={"auth_state": {"magpie_cookies": cookies}},
-            status_code=kwargs.get("jupyterhub_api_response_status_code", 200),
+            status=kwargs.get("jupyterhub_api_response_status_code", 200),
         )
     yield

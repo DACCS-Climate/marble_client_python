@@ -3,8 +3,8 @@ import json
 import os
 import shutil
 import warnings
-from functools import cache, wraps
-from typing import Any, Callable, Optional
+from functools import cache
+from typing import Any, Optional
 from urllib.parse import urlparse
 
 import dateutil.parser
@@ -13,33 +13,9 @@ import requests
 from marble_client.constants import CACHE_FNAME, NODE_REGISTRY_URL
 from marble_client.exceptions import JupyterEnvironmentError, UnknownNodeError
 from marble_client.node import MarbleNode
+from marble_client.utils import check_jupyterlab
 
 __all__ = ["MarbleClient"]
-
-
-def check_jupyterlab(f: Callable) -> Callable:
-    """
-    Raise an error if not running in a Jupyterlab instance.
-
-    Wraps the function f by first checking if the current script is running in a
-    Marble Jupyterlab environment and raising a JupyterEnvironmentError if not.
-
-    This is used as a pre-check for functions that only work in a Marble Jupyterlab
-    environment.
-
-    Note that this checks if either the BIRDHOUSE_HOST_URL or PAVICS_HOST_URL are present to support
-    versions of birdhouse-deploy prior to 2.4.0.
-    """
-
-    @wraps(f)
-    def wrapper(*args, **kwargs) -> Any:
-        birdhouse_host_var = ("PAVICS_HOST_URL", "BIRDHOUSE_HOST_URL")
-        jupyterhub_env_vars = ("JUPYTERHUB_API_URL", "JUPYTERHUB_USER", "JUPYTERHUB_API_TOKEN")
-        if any(os.getenv(var) for var in birdhouse_host_var) and all(os.getenv(var) for var in jupyterhub_env_vars):
-            return f(*args, **kwargs)
-        raise JupyterEnvironmentError("Not in a Marble jupyterlab environment")
-
-    return wrapper
 
 
 class MarbleClient:
@@ -67,7 +43,7 @@ class MarbleClient:
         self._registry_uri, self._registry = self._load_registry(fallback)
 
         for node_id, node_details in self._registry.items():
-            self._nodes[node_id] = MarbleNode(node_id, node_details)
+            self._nodes[node_id] = MarbleNode(node_id, node_details, client=self)
 
     @property
     def nodes(self) -> dict[str, MarbleNode]:

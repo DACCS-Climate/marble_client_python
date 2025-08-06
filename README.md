@@ -152,6 +152,14 @@ access the resource if you have permission:
 >>> session.get(f"{client.this_node.url}/some/protected/subpath")
 ```
 
+## Interactively logging in to a node
+
+In order to login to a different node or if you're running a script or notebook from outside a Marble
+Jupyterlab environment, use the `MarbleNode.login` function to generate a `requests.Session` object.
+
+This will prompt you to input your credentials to `stdin` or an input widget if you're in a compatible 
+Jupyter environment.
+
 ## Contributing
 
 We welcome any contributions to this codebase. To submit suggested changes, please do the following:
